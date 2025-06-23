@@ -10,26 +10,28 @@ import {
   LogOut, 
   Trash2,
   MoreVertical,
-  User
+  User,
+  Key
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api";
 import { ChatSession } from "@/types/api";
+import { ApiKeysDialog } from "./ApiKeysDialog";
+import { SettingsDialog } from "./SettingsDialog";
 
 export function ChatSidebar() {
   const { backendUser } = useAuth();
   const router = useRouter();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [newChatName, setNewChatName] = useState("");
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isApiKeysDialogOpen, setIsApiKeysDialogOpen] = useState(false);
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   useEffect(() => {
     loadChatSessions();
@@ -47,19 +49,7 @@ export function ChatSidebar() {
     }
   };
 
-  const createNewChat = async () => {
-    try {
-      const newSession = await apiClient.createChatSession({
-        name: newChatName.trim() || null,
-      });
-      setChatSessions([newSession, ...chatSessions]);
-      setNewChatName("");
-      setIsCreateDialogOpen(false);
-      router.push(`/${newSession.id}`);
-    } catch (error) {
-      console.error("Error creating chat session:", error);
-    }
-  };
+
 
   const deleteChat = async (chatId: string) => {
     try {
@@ -85,36 +75,19 @@ export function ChatSidebar() {
       {/* Header */}
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Teehee Chat</h2>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="h-8 w-8 p-0">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Chat</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <Input
-                  placeholder="Chat name (optional)"
-                  value={newChatName}
-                  onChange={(e) => setNewChatName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && createNewChat()}
-                />
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsCreateDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={createNewChat}>Create</Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <h2 
+            className="text-lg font-semibold cursor-pointer hover:text-primary transition-colors"
+            onClick={() => router.push("/")}
+          >
+            Teehee Chat
+          </h2>
+          <Button 
+            size="sm" 
+            className="h-8 w-8 p-0"
+            onClick={() => router.push("/")}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -188,7 +161,16 @@ export function ChatSidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start"
-          onClick={() => router.push("/settings")}
+          onClick={() => setIsApiKeysDialogOpen(true)}
+        >
+          <Key className="h-4 w-4 mr-2" />
+          API Keys
+        </Button>
+        
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => setIsSettingsDialogOpen(true)}
         >
           <Settings className="h-4 w-4 mr-2" />
           Settings
@@ -211,6 +193,16 @@ export function ChatSidebar() {
           </Button>
         </div>
       </div>
+      
+      {/* Dialogs */}
+      <ApiKeysDialog 
+        open={isApiKeysDialogOpen} 
+        onOpenChange={setIsApiKeysDialogOpen} 
+      />
+      <SettingsDialog 
+        open={isSettingsDialogOpen} 
+        onOpenChange={setIsSettingsDialogOpen} 
+      />
     </div>
   );
 } 
