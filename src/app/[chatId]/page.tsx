@@ -1,15 +1,15 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, use } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatPageProps {
-  params: {
+  params: Promise<{
     chatId: string;
-  };
+  }>;
 }
 
 function ChatPageContent({ chatId }: { chatId: string }) {
@@ -25,7 +25,7 @@ function ChatPageContent({ chatId }: { chatId: string }) {
 
 export default function ChatPage({ params }: ChatPageProps) {
   const { isAuthenticated, isLoading } = useAuth();
-  const { chatId } = params;
+  const { chatId } = use(params);
 
   if (isLoading) {
     return (
