@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
+import { NewChatInterface } from "@/components/chat/NewChatInterface";
 import { Bot } from "lucide-react";
 
 export default function Home() {
@@ -23,12 +24,8 @@ export default function Home() {
     return (
       <div className="flex h-screen bg-background">
         <ChatSidebar />
-        <main className="flex-1 flex flex-col items-center justify-center">
-          <div className="text-center">
-            <Bot className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h1 className="text-2xl font-bold mb-4">Welcome to Teehee Chat</h1>
-            <p className="text-muted-foreground mb-8">Select a chat from the sidebar or create a new one to get started.</p>
-          </div>
+        <main className="flex-1 flex flex-col">
+          <NewChatInterface />
         </main>
       </div>
     );
