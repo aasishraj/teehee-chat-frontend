@@ -30,7 +30,7 @@ export interface ChatSessionCreate {
 
 export interface Message {
   role: string;
-  content: any;
+  content: string | Record<string, unknown>;
   id: string;
   chat_session_id: string;
   parent_message_id: string | null;
@@ -42,7 +42,7 @@ export interface Message {
 
 export interface MessageCreate {
   role: string;
-  content: any;
+  content: string | Record<string, unknown>;
   parent_message_id?: string | null;
 }
 

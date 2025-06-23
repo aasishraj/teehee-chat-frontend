@@ -10,8 +10,7 @@ import {
   ProviderKey, 
   ProviderKeyCreate, 
   ProviderInfo, 
-  ModelInfo, 
-  APIError 
+  ModelInfo 
 } from '@/types/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -62,7 +61,7 @@ class APIClient {
   }
 
   // Auth endpoints
-  async googleSSO(ssoData: any): Promise<Token> {
+  async googleSSO(ssoData: Record<string, unknown>): Promise<Token> {
     return this.request<Token>('/auth/google-sso', {
       method: 'POST',
       body: JSON.stringify(ssoData),
@@ -164,8 +163,8 @@ class APIClient {
     return this.request<ModelInfo[]>('/models');
   }
 
-  async healthCheck(): Promise<any> {
-    return this.request<any>('/health');
+  async healthCheck(): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>('/health');
   }
 }
 

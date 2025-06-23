@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { 
   Plus, 
@@ -28,6 +28,7 @@ import { SettingsDialog } from "./SettingsDialog";
 export function ChatSidebar() {
   const { backendUser } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isApiKeysDialogOpen, setIsApiKeysDialogOpen] = useState(false);
@@ -35,6 +36,7 @@ export function ChatSidebar() {
 
   useEffect(() => {
     loadChatSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadChatSessions = async () => {
@@ -42,6 +44,11 @@ export function ChatSidebar() {
       setIsLoading(true);
       const sessions = await apiClient.listChatSessions();
       setChatSessions(sessions);
+      
+      // If there are no chats and we're on a chat page, redirect to home
+      if (sessions.length === 0 && pathname !== '/') {
+        router.push('/');
+      }
     } catch (error) {
       console.error("Error loading chat sessions:", error);
     } finally {
@@ -54,7 +61,13 @@ export function ChatSidebar() {
   const deleteChat = async (chatId: string) => {
     try {
       await apiClient.deleteChatSession(chatId);
-      setChatSessions(chatSessions.filter(chat => chat.id !== chatId));
+      const remainingChats = chatSessions.filter(chat => chat.id !== chatId);
+      setChatSessions(remainingChats);
+      
+      // If this was the last chat and we're currently viewing it, redirect to home
+      if (remainingChats.length === 0 || pathname === `/${chatId}`) {
+        router.push('/');
+      }
     } catch (error) {
       console.error("Error deleting chat session:", error);
     }
@@ -180,7 +193,7 @@ export function ChatSidebar() {
           <div className="flex items-center space-x-2 min-w-0">
             <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <span className="text-sm truncate">
-              {backendUser?.email}
+              {backendUser?.email?.split('@')[0] || 'User'}
             </span>
           </div>
           <Button

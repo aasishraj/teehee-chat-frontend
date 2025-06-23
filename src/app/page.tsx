@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { NewChatInterface } from "@/components/chat/NewChatInterface";
-import { Bot } from "lucide-react";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
 
   if (isLoading) {
     return (
