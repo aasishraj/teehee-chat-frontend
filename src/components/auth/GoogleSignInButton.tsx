@@ -16,34 +16,7 @@ export default function GoogleSignInButton() {
     }
   }
 
-  // Effect to handle backend API call after successful sign-in
-  React.useEffect(() => {
-    const authenticateWithBackend = async () => {
-      if (session?.idToken) {
-        try {
-          const response = await fetch("http://localhost:8000/auth/google-sso", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: session.idToken,
-            }),
-          })
-          
-          if (response.ok) {
-            console.log("Successfully authenticated with backend")
-          } else {
-            console.error("Failed to authenticate with backend")
-          }
-        } catch (error) {
-          console.error("Error authenticating with backend:", error)
-        }
-      }
-    }
-
-    authenticateWithBackend()
-  }, [session?.idToken])
+  // Backend authentication is handled by useAuth hook
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/" })
